@@ -1,0 +1,128 @@
+# Qwen3-VL Configuration
+# Supports: 2B, 7B, 8B (all use 2048 dimension)
+# Paths: Local or HuggingFace
+
+# =============================================================================
+# MODEL CONFIGURATION
+# =============================================================================
+
+target_dim: 2048
+vlm_type: "qwen3"
+
+# Model path (choose one):
+# Option 1: HuggingFace path
+vlm_model_path: "Qwen/Qwen3-VL-2B-Instruct"
+# Option 2: Local path
+# vlm_model_path: "/path/to/local/Qwen3-VL-2B-Instruct"
+
+# For 8B quantized (INT4 - fits in 12GB):
+# vlm_model_path: "Qwen/Qwen3-VL-8B-Instruct"
+# quantization: "int4"
+
+# =============================================================================
+# QUANTIZATION OPTIONS (for 8B on 12GB GPU)
+# =============================================================================
+
+# Quantization type (optional):
+# - null or "none": FP16 (default, 2B only)
+# - "int8": INT8 quantization (~8GB for 8B model)
+# - "int4": INT4 quantization (~5GB for 8B model) - RECOMMENDED for 12GB GPU
+quantization: null  # Change to "int4" for 8B model
+
+# =============================================================================
+# TRAINING CONFIGURATION
+# =============================================================================
+
+num_samples: 1000
+min_chars: 5000
+max_chars: 100000
+max_pages: 6
+num_epochs: 10
+learning_rate: 1e-4
+batch_size: 1
+save_every: 1
+
+# =============================================================================
+# DATASET CONFIGURATION
+# =============================================================================
+
+dataset_name: "wikipedia"
+dataset_config: "20220301.en"
+
+# Alternative datasets:
+# dataset_name: "c4"           # Diverse web text
+# dataset_name: "bookcorpus"   # Long-form books
+
+# =============================================================================
+# TESTING CONFIGURATION
+# =============================================================================
+
+max_pages: 200
+benchmark: "longbench"
+num_test_samples: 20
+
+# =============================================================================
+# OUTPUT CONFIGURATION
+# =============================================================================
+
+output_dir: "./checkpoints/qwen3_vl"
+adapter_name: "qwen3_vl_2b.pth"
+
+# =============================================================================
+# MEMORY REQUIREMENTS (FP16)
+# =============================================================================
+
+# Qwen3-VL-2B:
+#   - Model: ~4GB
+#   - DeepEncoder: ~800MB
+#   - Adapter: ~20MB
+#   - Total: ~5GB ✅ Fits 12GB GPU
+
+# Qwen3-VL-8B FP16:
+#   - Model: ~16GB ❌ Too big for 12GB GPU
+
+# Qwen3-VL-8B INT4 Quantized:
+#   - Model: ~5GB
+#   - DeepEncoder: ~800MB
+#   - Adapter: ~20MB
+#   - Total: ~6GB ✅ Fits 12GB GPU (RECOMMENDED)
+
+# =============================================================================
+# ADAPTER COMPATIBILITY
+# =============================================================================
+
+# Same adapter works for:
+# ✅ Qwen3-VL-2B
+# ✅ Qwen3-VL-7B
+# ✅ Qwen3-VL-8B (all have 2048 dims)
+# ✅ Qwen2-VL (same dimension)
+# ✅ Qwen2.5-VL (same dimension)
+
+# =============================================================================
+# USAGE EXAMPLES
+# =============================================================================
+
+# NOTE: DeepEncoder is automatically downloaded from HuggingFace on first use!
+# No need to download separately - just run the scripts.
+
+# Train with 2B (FP16):
+# python train.py --vlm_model_path "Qwen/Qwen3-VL-2B-Instruct" --target_dim 2048
+
+# Train with 8B INT4 (quantized - RECOMMENDED for 12GB GPU):
+# python train.py --vlm_model_path "Qwen/Qwen3-VL-8B-Instruct" \
+#                 --target_dim 2048 \
+#                 --quantization int4
+
+# Train with local VLM:
+# python train.py --vlm_model_path "/path/to/local/Qwen3-VL-2B-Instruct" --target_dim 2048
+
+# Test with trained adapter:
+# python test.py --vlm_model_path "Qwen/Qwen3-VL-2B-Instruct" \
+#                --adapter_checkpoint ./checkpoints/qwen3_vl/adapter_best.pth \
+#                --benchmark longbench
+
+# Test with 8B INT4 quantized:
+# python test.py --vlm_model_path "Qwen/Qwen3-VL-8B-Instruct" \
+#                --adapter_checkpoint ./checkpoints/qwen3_vl/adapter_best.pth \
+#                --quantization int4 \
+#                --benchmark longbench
