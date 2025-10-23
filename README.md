@@ -103,7 +103,7 @@ Response
 
 **Limitation**: DeepEncoder outputs are designed for DeepSeek's proprietary VLM.
 
-### Our Approach: Adapter for Qwen3-VL-2B
+### My Approach: Adapter for Qwen3-VL-2B
 
 We add a lightweight adapter to bridge DeepEncoder to Qwen3-VL-2B:
 
@@ -189,7 +189,7 @@ Native text has higher accuracy (54.5%) on the few samples it completes, but fai
 ## 📁 Repository Structure
 
 ```
-optical_universal/
+VLM-Optical-Encoder/
 ├── deepencoder.py             # DeepEncoder architecture (from DeepSeek-OCR)
 ├── optical_encoder.py         # Adapter + integration code
 ├── train.py                   # Training script
@@ -208,7 +208,7 @@ optical_universal/
 
 ## ⚠️ Disclaimer
 
-**This is experimental research code.** Scalability has not been tested beyond the reported benchmarks. Performance on diverse tasks and production workloads is untested. Use at your own risk.
+**This is experimental research code.** Scalability has not been tested beyond the reported benchmarks. Performance on diverse tasks and production workloads is untested. Use at your own risk. I lack the hardware to scale this up to 4B, 8B, 30B and 235B models so I appreciate it if someone can test this beyond 2B.
 
 ## 🙏 Credits
 
